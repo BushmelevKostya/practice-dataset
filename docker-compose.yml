@@ -6,23 +6,29 @@ services:
   spark-worker:
     image: apache/spark:4.2.0-scala2.13-java21-ubuntu
     command: /opt/spark/bin/spark-class org.apache.spark.deploy.worker.Worker spark://spark-master:7077
+    user: root
     depends_on:
       - spark-master
     volumes:
       - ./data.csv:/opt/data/data.csv
+      - ./output:/opt/output
 
   spark-submit:
     image: apache/spark:4.2.0-scala2.13-java21-ubuntu
     command: >
-      /opt/spark/bin/spark-submit
+      bash -c "/opt/spark/bin/spark-submit
       --class org.itmo.Main
       --master spark://spark-master:7077
       --conf spark.driver.host=spark-submit
       /opt/app/practice-dataset-1.0-SNAPSHOT.jar
       /opt/data/data.csv
+      /opt/output
+      && chown -R 1000:1000 /opt/output"
+    user: root
     depends_on:
       - spark-master
       - spark-worker
     volumes:
       - ./build/libs:/opt/app
       - ./data.csv:/opt/data/data.csv
+      - ./output:/opt/output

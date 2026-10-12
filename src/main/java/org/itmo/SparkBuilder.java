@@ -6,8 +6,12 @@ import org.apache.spark.sql.SparkSession;
 public class SparkBuilder {
 
     public static SparkSession getSparkSession() {
-        return SparkSession.builder()
+        SparkSession spark = SparkSession.builder()
                 .appName("practice-dataset")
                 .getOrCreate();
+
+        spark.sparkContext().setLogLevel("WARN");
+
+        return spark;
     }
 }

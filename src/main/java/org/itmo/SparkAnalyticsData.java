@@ -10,11 +10,13 @@ import static org.apache.spark.sql.functions.sum;
 
 public class SparkAnalyticsData implements AnalyticsData {
 
-    /** Топ-5 заказов по сумме среди всего датасета. */
+    /** Топ-5 самых популярных товаров по общему количеству проданных единиц. */
     @Override
     public DataSet getTopFiveOrder(DataSet dataSet) {
-        Dataset<Row> result = getOrders(dataSet)
-                .orderBy(col("TotalPrice").desc())
+        Dataset<Row> result = ((SparkDataSet) dataSet).getData()
+                .groupBy("StockCode")
+                .agg(sum("Quantity").alias("TotalQuantity"))
+                .orderBy(col("TotalQuantity").desc())
                 .limit(5);
         return new SparkDataSet(result);
     }
