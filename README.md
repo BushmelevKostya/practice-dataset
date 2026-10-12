@@ -9,7 +9,7 @@
 
 ### 1. Интерфейсы
 
-![Разработанные интерфейсы](src/main/resources/telegram-cloud-photo-size-2-5361807567576834527-x.jpg)
+![Разработанные интерфейсы](src/main/resources/interfaces.jpg)
 
 ### 2. Загрузка и предварительная обработка данных
 
