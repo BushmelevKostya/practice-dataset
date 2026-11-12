@@ -1,29 +1,34 @@
+x-spark-image: &spark-image apache/spark:4.2.0-scala2.13-java21-ubuntu
+
 services:
   spark-master:
-    image: apache/spark:4.2.0-scala2.13-java21-ubuntu
+    image: *spark-image
     command: /opt/spark/bin/spark-class org.apache.spark.deploy.master.Master
 
   spark-worker:
-    image: apache/spark:4.2.0-scala2.13-java21-ubuntu
+    image: *spark-image
     command: /opt/spark/bin/spark-class org.apache.spark.deploy.worker.Worker spark://spark-master:7077
     user: root
     depends_on:
       - spark-master
     volumes:
       - ./data.csv:/opt/data/data.csv
+      - ./src/main/resources/datasets:/opt/data/datasets
       - ./output:/opt/output
 
-  spark-submit:
-    image: apache/spark:4.2.0-scala2.13-java21-ubuntu
+  # Лабораторная 1: docker compose --profile lab1 up --exit-code-from spark-submit-lab1
+  spark-submit-lab1:
+    image: *spark-image
+    profiles: [lab1]
     command: >
       bash -c "/opt/spark/bin/spark-submit
-      --class org.itmo.Main
+      --class org.itmo.lab1.Main
       --master spark://spark-master:7077
-      --conf spark.driver.host=spark-submit
+      --conf spark.driver.host=spark-submit-lab1
       /opt/app/practice-dataset-1.0-SNAPSHOT.jar
       /opt/data/data.csv
-      /opt/output
-      && chown -R 1000:1000 /opt/output"
+      /opt/output;
+      code=$$?; chown -R 1000:1000 /opt/output; exit $$code"
     user: root
     depends_on:
       - spark-master
@@ -31,4 +36,28 @@ services:
     volumes:
       - ./build/libs:/opt/app
       - ./data.csv:/opt/data/data.csv
+      - ./output:/opt/output
+
+  # Лабораторная 2: docker compose --profile lab2 up --exit-code-from spark-submit-lab2
+  # Число игроков на год задаётся переменной N (по умолчанию 5).
+  spark-submit-lab2:
+    image: *spark-image
+    profiles: [lab2]
+    command: >
+      bash -c "/opt/spark/bin/spark-submit
+      --class org.itmo.lab2.Main
+      --master spark://spark-master:7077
+      --conf spark.driver.host=spark-submit-lab2
+      /opt/app/practice-dataset-1.0-SNAPSHOT.jar
+      /opt/data/datasets
+      /opt/output/lab2
+      ${N:-5};
+      code=$$?; chown -R 1000:1000 /opt/output; exit $$code"
+    user: root
+    depends_on:
+      - spark-master
+      - spark-worker
+    volumes:
+      - ./build/libs:/opt/app
+      - ./src/main/resources/datasets:/opt/data/datasets
       - ./output:/opt/output
