@@ -48,7 +48,7 @@ docker compose up --exit-code-from spark-submit 2>&1 | grep '^spark-submit' | gr
 Нужен установленный Spark 4.x на Java 21:
 
 ```bash
-spark-submit --class org.itmo.Main --master "local[*]" build/libs/practice-dataset-1.0-SNAPSHOT.jar data.csv output
+spark-submit --class org.itmo.lab1.Main --master "local[*]" build/libs/practice-dataset-1.0-SNAPSHOT.jar data.csv output
 ```
 
 Аргументы: путь к CSV-файлу с данными и папка для результатов.

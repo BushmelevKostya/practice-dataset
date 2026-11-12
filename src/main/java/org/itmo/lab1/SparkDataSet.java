@@ -1,4 +1,4 @@
-package org.itmo;
+package org.itmo.lab1;
 
 import org.apache.spark.sql.Dataset;
 import org.apache.spark.sql.Row;

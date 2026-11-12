@@ -1,4 +1,4 @@
-package org.itmo;
+package org.itmo.lab1;
 
 public interface AnalyticsData {
 
